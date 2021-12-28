@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 
 """
@@ -78,8 +79,35 @@ def inv(A: np.ndarray):
         raise Exception('Matrix cannot be inverted')
     return adj(A) / d
 
+"""
+Convert data from cartesian coorinates to polar coordinates.
+:returns: New X and Y values
+"""
+def to_polar(X: np.ndarray, Y: np.ndarray):
+    nX, nY = [], []
+
+    for x, y in zip(X, Y):
+        nX.append((x**2 + y**2)**0.5)
+        if x != 0:
+            nY.append(math.degrees(math.atan(y / x)))
+        else:
+            nY.append(0)
+
+    """
+    # For visual testing
+    import matplotlib.pyplot as plt
+    
+    plt.scatter(X, Y, c="red")
+    plt.scatter(nX, nY, c="green")
+    plt.show()
+    """
+    return np.array(nX), np.array(nY)
+
 
 if __name__ == '__main__':
+    import random
+
+
     print('Testing', __file__)
 
     A = np.array([
@@ -101,6 +129,13 @@ if __name__ == '__main__':
         [3, 4]
     ])
     
+    # Test data
+    X = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    y = np.array([random.randint(10, 100) for _ in range(10)])
+
     #print(chess_table_rule(C))
     #print(adj(B))
     #print(inv(B))
+
+    print(X, y)
+    print(to_polar(X, y))
