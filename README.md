@@ -6,6 +6,12 @@ A blazingly fast ML library for Python
 
 ...
 
+## Tests
+
+To run a test use:
+
+```python positron/tests/test_file.py```
+
 ## Authors
 
 * **[Martin Kondor](https://github.com/MartinKondor)**
