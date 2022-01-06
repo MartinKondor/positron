@@ -104,6 +104,10 @@ def to_polar(X: np.ndarray, Y: np.ndarray):
     return np.array(nX), np.array(nY)
 
 
+def sigmoid(X):
+    return 1 / (1 + np.exp(-X))
+
+
 if __name__ == '__main__':
     import random
 

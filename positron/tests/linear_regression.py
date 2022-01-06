@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 
 import calc
 import datat
-import algo
+import regression
 
 
 np.random.seed(0)
@@ -28,5 +28,12 @@ plt.title('BTC Price')
 plt.xlabel('Date')
 plt.ylabel('Price')
 plt.scatter(X, y, facecolors='None', edgecolors='k', alpha=.85)
-plt.plot(X, algo.linear_regression(X, y), c="g")
+plt.plot(X, regression.linear(X, y), c="g")
+"""
+# For confrimation
+from sklearn.linear_model import LinearRegression
+l = LinearRegression()
+l.fit(X.reshape(-1, 1), y)
+plt.plot(X, l.predict(X.reshape(-1,1)), c="r")
+"""
 plt.show()
