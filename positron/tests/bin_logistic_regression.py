@@ -23,11 +23,7 @@ X1 = np.array(df["x1"])
 X2 = np.array(df["x2"])
 y = np.array(df["y"])
 
-r = regression.logistic(y.T * X1) + regression.logistic(y.T * X2)
-r /= 2
-r[r > 0.5] = 1
-r[r < 0.5] = 0
-r[r == 0.5] = 0
+r = regression.binary_logistic([X1, X2], y)
 print(r)
 
 plt.title('Sample data')
