@@ -2,6 +2,20 @@ import numpy as np
 
 
 """
+Residual Sum of Squares
+"""
+def rss(y: np.ndarray, y_hat: np.ndarray):
+    return ((y - y_hat)**2).sum()
+
+
+"""
+Derivative of Residual Sum of Squares
+"""
+def drss(y: np.ndarray, y_hat: np.ndarray):
+    return (-2*y + 2*y_hat).sum()
+
+
+"""
 Root Mean Square Error
 """
 def rmse(y_hat: np.ndarray, y: np.ndarray):

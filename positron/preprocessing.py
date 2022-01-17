@@ -43,6 +43,11 @@ def split_train_test(data: pd.DataFrame, test_ratio=0.2):
     return data.iloc[train_indices], data.iloc[test_indices]
 
 
+def to_np(x: pd.Series, y: pd.Series, single=False):
+    if single:
+        return np.array(x).reshape(-1, 1), np.array(y).reshape(-1, 1)
+    return np.array(x), np.array(y)
+
 
 if __name__ == "__main__":
     X = np.array([0, 1, 2, 3, 4, 5, 6, 7])
