@@ -1,6 +1,6 @@
 import numpy as np
 
-import calc
+import calculating as calc
 
 
 """

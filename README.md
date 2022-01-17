@@ -8,9 +8,9 @@ A blazingly fast ML library for Python
 
 ## Tests
 
-To run a test use:
+To run tests on a file, run the file directly, for example:
 
-```python positron/tests/test_file.py```
+```$ python positron/preprocessing.py```
 
 ## Authors
 

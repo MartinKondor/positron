@@ -8,7 +8,7 @@ setup(
     description='A blazingly fast ML library for Python',
     author='Martin Kondor (https://martinkondor.github.io)',
     license='MIT',
-    install_requires=['numpy'],
+    install_requires=['numpy', 'pandas'],
     setup_requires=[],
     tests_require=[],
     test_suite='tests'

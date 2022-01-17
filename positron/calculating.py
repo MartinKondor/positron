@@ -79,6 +79,7 @@ def inv(A: np.ndarray):
         raise Exception('Matrix cannot be inverted')
     return adj(A) / d
 
+
 """
 Convert data from cartesian coorinates to polar coordinates.
 :returns: New X and Y values
@@ -120,7 +121,7 @@ if __name__ == '__main__':
         [3, -2, 5],
     ])
 
-    #print(det(A))
+    print(det(A))
 
     B = np.array([
         [1, -2, 0],
@@ -137,9 +138,9 @@ if __name__ == '__main__':
     X = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     y = np.array([random.randint(10, 100) for _ in range(10)])
 
-    #print(chess_table_rule(C))
-    #print(adj(B))
-    #print(inv(B))
+    print(chess_table_rule(C))
+    print(adj(B))
+    print(inv(B))
 
     print(X, y)
     print(to_polar(X, y))
