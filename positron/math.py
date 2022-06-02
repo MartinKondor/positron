@@ -1,5 +1,5 @@
 import numpy as np
-import math
+import math as m
 
 
 """
@@ -83,7 +83,7 @@ def to_polar(X: np.ndarray, Y: np.ndarray):
     for x, y in zip(X, Y):
         nX.append((x**2 + y**2)**0.5)
         if x != 0:
-            nY.append(math.degrees(math.atan(y / x)))
+            nY.append(m.degrees(m.atan(y / x)))
         else:
             nY.append(0)
 
@@ -130,15 +130,28 @@ def norm(A: np.ndarray, p: int):
 
 
 """
-:returns: the matrix's diagonal entries in a vector 
+:returns: n x n identity matrix
 """
-def diag(A: np.ndarray):
+def I(n: int):
+    A = []
+    for i in range(n):
+        row = [0 for j in range(n)]
+        row[i] = 1
+        A.append(row)
+    return np.array(A) 
+
+
+"""
+Trace operator
+:returns: the sum of the diagonal entries
+"""
+def tr(A: np.ndarray):
     vec = []
     for i in range(A.shape[1]):
         for j in range(A.shape[0]):
             if i == j:
                 vec.append(A[i][j])
-    return np.array(vec)
+    return np.sum(np.array(vec))
 
 
 if __name__ == '__main__':
