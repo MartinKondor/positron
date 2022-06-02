@@ -29,11 +29,10 @@ def stamps_to_dates(stamps, format="%d-%m-%Y"):
 
 
 """
-Split data to train and test set according to the 
-given test ratio
+Split data to train and test set according to the given test ratio
 :data: pandas.DataFrame object
 :test_ratio: float type containing the precentage, like: 0.2 for 20%
-:returns: train, test data
+:returns: train data, test data
 """
 def split_train_test(data: pd.DataFrame, test_ratio=0.2):
     shuffled_indices = np.random.permutation(len(data))
@@ -43,6 +42,9 @@ def split_train_test(data: pd.DataFrame, test_ratio=0.2):
     return data.iloc[train_indices], data.iloc[test_indices]
 
 
+"""
+Convert pd.Series arrays to np.ndarrays
+"""
 def to_np(*arrays: pd.Series, single=False):
     if single:
         return tuple([np.array(a).reshape(-1, 1) for a in arrays])
