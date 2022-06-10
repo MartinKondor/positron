@@ -2,6 +2,10 @@
 
 Blazingly fast deep learning library for Python.
 
+The main focus of Positron is to implement functions that are common (or rare) in Linear Algebra, but are not in Numpy by default.
+
+_There is a [Medium Article](https://martinkondor.medium.com/positron-linear-algebra-library-for-python-8a3c5c3e1c00) written about this library, make sure to check it out!_
+
 ## Features
 
 | File      | Description |

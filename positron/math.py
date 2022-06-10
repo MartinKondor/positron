@@ -70,6 +70,8 @@ def subdet(A: np.ndarray):
 :returns: adjungate of A
 """
 def adj(A: np.ndarray):
+    if A.shape[0] != A.shape[1]:
+        raise Exception('Wrong matrix dimensions for adjungate')
     return chess_table_rule(subdet(A)).T
 
 
