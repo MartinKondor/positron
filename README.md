@@ -1,6 +1,6 @@
 # ⚡ Positron
 
-Blazingly fast deep learning library for Python.
+Blazingly fast _functional_ deep learning library for Python.
 
 The main focus of Positron is to implement functions that are common (or rare) in Linear Algebra, but are not in Numpy by default.
 
@@ -10,7 +10,10 @@ _There is a [Medium Article](https://martinkondor.medium.com/positron-linear-alg
 
 | File      | Description |
 | --------- | ----------- |
-| math.py      | Matrix operations: inverse, determinant, adjungate etc.       |
+| example.py      | A simple neural network adaptation working with this library.       |
+| deep.py      | Deep Learning learning related functions: feedforward, backprop etc.       |
+| activ.py      | Common Deep Learning activation functions.       |
+| maths.py      | Matrix operations: inverse, determinant, adjungate etc.       |
 | prep.py      | Data preprocessing: time stamp to date, date to time stamp etc.        |
 | score.py     | Scoring functions and their derivatives: residual sum of squares, mean absolute error etc.        |
 
