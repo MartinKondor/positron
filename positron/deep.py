@@ -21,7 +21,7 @@ def init_network(input_shape: tuple or list, weight_sizes: list, output_size: in
 
     for s in weight_sizes + [output_size]:
         ws.append(np.random.random((prev_s, s,)))
-        bs.append(np.random.random((s, 1,)))
+        bs.append(np.random.random((1, 1,)))
         
         if verbose:
             print("Created layer with shape:", ws[-1].shape, bs[-1].shape)
@@ -38,25 +38,29 @@ def init_network(input_shape: tuple or list, weight_sizes: list, output_size: in
 :bs: biases
 :activf: activation functions
 :dactifs: derivate of activation functions
+:cost: cost function
+:dcost: derivate of the cost function
 :epoch: number of training sessions
 :eta: learning rate
-::
 """
-def train(X, y, ws, bs, activf, dactivf, epoch, eta):
+def train(X, y, ws, bs, activf, dactivf, cost, dcost, epoch, eta):
     cost_history = []
     a = np.copy(X)
     input_weights = []
     activated_weights = []
 
-    for w, b in zip(ws[1:], bs[1:]):
-        print(w.shape, b.shape, (w.shape[0], b.shape[1],))
-
-        z = np.dot(a, ws[0]) + bs[0]
-        a = activf[0](z)
+    # Feedforward
+    for i, (w, b,) in enumerate(zip(ws, bs)):
+        z = np.dot(a, w) + b
+        a = activf[i](z)
         input_weights.append(z)
         activated_weights.append(a)
 
-    # TODO
+
+    # First layer
+    z = input_weights[-1]
+    a = activated_weights[-1]
+    print(dcost(a, y) * dactivf[-1]())
 
     return ws, bs, cost_history
 

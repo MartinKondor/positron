@@ -2,6 +2,7 @@
 import numpy as np
 import activ
 import deep as d
+import score
 
 
 def run():
@@ -33,7 +34,9 @@ def run():
     print()
 
     print("Training:")
-    ws, bs, cost_history = d.train(X, y, ws, bs, actifs, dactifs, epoch, eta)
+    cost = score.mse
+    dcost = score.dmse
+    ws, bs, cost_history = d.train(X, y, ws, bs, actifs, dactifs, cost, dcost, epoch, eta)
 
 
 if __name__ == "__main__":

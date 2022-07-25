@@ -16,10 +16,21 @@ def drss(y: np.ndarray, y_hat: np.ndarray):
 
 
 """
+Mean Square Error
+"""
+def mse(y_hat: np.ndarray, y: np.ndarray):
+    return  ((y_hat - y)**2).sum() / y_hat.shape[0]
+
+
+def dmse(y_hat: np.ndarray, y: np.ndarray):
+    return (y - y_hat)
+
+
+"""
 Root Mean Square Error
 """
 def rmse(y_hat: np.ndarray, y: np.ndarray):
-    return  (((y_hat - y)**2).sum() / y_hat.shape[0])**.5
+    return  mse(y_hat, y)**.5
  
 
 """
