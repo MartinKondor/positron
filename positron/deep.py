@@ -43,24 +43,52 @@ def init_network(input_shape: tuple or list, weight_sizes: list, output_size: in
 :epoch: number of training sessions
 :eta: learning rate
 """
-def train(X, y, ws, bs, activf, dactivf, cost, dcost, epoch, eta):
+def SGD(X, y, ws, bs, activf, dactivf, cost, dcost, epoch, eta, verbose=False):
     cost_history = []
-    a = np.copy(X)
-    input_weights = []
-    activated_weights = []
 
-    # Feedforward
-    for i, (w, b,) in enumerate(zip(ws, bs)):
-        z = np.dot(a, w) + b
-        a = activf[i](z)
-        input_weights.append(z)
-        activated_weights.append(a)
+    for ep in range(epoch):
+        a = np.copy(X)
+        input_weights = []
+        activated_weights = []
+
+        # Feedforward
+        for i, (w, b,) in enumerate(zip(ws, bs)):
+            z = np.dot(a, w) + b
+            a = activf[i](z)
+            input_weights.append(z)
+            activated_weights.append(a)
+
+        # Calculate and save cost
+        C = cost(a, y)
+        cost_history.append(C)
+        if verbose:
+            print(f"epoch={ep}, C={C}")
+
+        # First layer
+        z = input_weights[-1]
+        a = activated_weights[-1]
+        delta_w = dcost(a, y) * dactivf[-1](a)
+        deltas = [delta_w]
+
+        # Skip the last layer from the loop
+        # i = 0, 1, 2 ... len(activated_weights) - 2
+        for i, a in enumerate(activated_weights[:-1]):
+            delta_w = np.dot(delta_w, ws[-i-1].T) * dactivf[-i-1](a)
+            deltas.append(delta_w)
 
 
-    # First layer
-    z = input_weights[-1]
-    a = activated_weights[-1]
-    print(dcost(a, y) * dactivf[-1]())
+        # Update the weights
+        i = len(ws) - 1
+        acs = [X, *activated_weights]
+        for w in ws:
+
+            # The first layer is updated with the input
+            if i == 0:
+                ws[0] += eta*np.dot(X.T, deltas[0])
+                continue
+            
+            ws[-i] += eta*np.dot(activated_weights[i-1].T, deltas[i-1])
+            i -= 1
 
     return ws, bs, cost_history
 
