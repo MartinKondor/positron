@@ -23,7 +23,7 @@ def mse(y_hat: np.ndarray, y: np.ndarray):
 
 
 def dmse(y_hat: np.ndarray, y: np.ndarray):
-    return (y - y_hat)
+    return (y_hat - y)
 
 
 """

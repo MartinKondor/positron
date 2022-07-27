@@ -21,7 +21,7 @@ def init_network(input_shape: tuple or list, weight_sizes: list, output_size: in
 
     for s in weight_sizes + [output_size]:
         ws.append(np.random.random((prev_s, s,)))
-        bs.append(np.random.random((1, 1,)))
+        bs.append(np.random.random((1, s,)))
         
         if verbose:
             print("Created layer with shape:", ws[-1].shape, bs[-1].shape)
@@ -29,6 +29,59 @@ def init_network(input_shape: tuple or list, weight_sizes: list, output_size: in
         prev_s = ws[-1].shape[1]
 
     return ws, bs
+
+
+"""
+Stochastic Gradient Descent.
+
+:X: input matrix
+:y: the desired outputs
+:ws: weights
+:bs: biases
+:activf: activation functions
+:dactifs: derivate of activation functions
+:cost: cost function
+:dcost: derivate of the cost function
+:epoch: number of training sessions
+:eta: learning rate
+"""
+def SGD(X, y, ws, bs, activf, dactivf, cost, dcost, epoch, eta, verbose=False):
+    cost_history = []
+
+    for ep in range(epoch):
+        a = np.copy(X)
+        Z = []
+        A = []
+
+        # Feedforward
+        for w, b, actf in zip(ws, bs, activf):
+            z = np.dot(a, w) + b
+            a = actf(z)
+            Z.append(z)
+            A.append(a)
+
+        # Calculate cost
+        c = cost(A[-1], y)
+        cost_history.append(c)
+        if verbose:
+            print("Ep =", epoch, ", Cost =", c)
+
+        # Calculate errors
+        delta = dcost(A[-1], y) * dactivf[-1](Z[-1])
+        nablas_w = [delta]
+        nablas_b = [delta]
+
+        for i, (z, w,) in enumerate(zip(Z[::-1][1:], ws[1:][::-1])):
+            delta = np.dot(delta, w.T) * dactivf[-1](z)
+            nablas_w.append(np.dot(delta.T, A[::-1][i]))
+            nablas_b.append(delta)
+
+        # Backprop
+        # nabla[0] = nabla for last layer
+        for w, b, nabla_w, nabla_b in zip(ws, bs, nablas_w[::-1], nablas_w[::-1]):
+            print("ws,bs:", w.shape, b.shape, "nablas:", nabla_w.shape, nabla_b.shape)
+
+    return ws, bs, cost_history
 
 
 """
@@ -43,7 +96,7 @@ def init_network(input_shape: tuple or list, weight_sizes: list, output_size: in
 :epoch: number of training sessions
 :eta: learning rate
 """
-def SGD(X, y, ws, bs, activf, dactivf, cost, dcost, epoch, eta, verbose=False):
+def _SGD(X, y, ws, bs, activf, dactivf, cost, dcost, epoch, eta, verbose=False):
     cost_history = []
 
     for ep in range(epoch):
