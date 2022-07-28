@@ -4,20 +4,20 @@ import numpy as np
 """
 Residual Sum of Squares
 """
-def rss(y: np.ndarray, y_hat: np.ndarray) -> np.ndarray:
+def rss(y_hat, y):
     return (y - y_hat)**2
 
-def drss(y: np.ndarray, y_hat: np.ndarray) -> np.ndarray:
+def drss(y_hat, y):
     return -2*y + 2*y_hat
 
 
 """
 Mean Square Error
 """
-def mse(y_hat: np.ndarray, y: np.ndarray) -> np.ndarray:
+def mse(y_hat, y):
     return  1/2 * (y - y_hat)**2
 
-def dmse(y_hat: np.ndarray, y: np.ndarray) -> np.ndarray:
+def dmse(y_hat, y):
     return y_hat - y
 
 

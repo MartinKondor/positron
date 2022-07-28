@@ -1,4 +1,4 @@
-# ⚡ positron
+# ⚡ Positron
 
 [![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg)](https://github.com/MartinKondor/positron/)
 [![version](https://img.shields.io/badge/version-v0.9-red.svg)](https://github.com/MartinKondor/positron)
@@ -8,7 +8,11 @@
 
 Blazingly fast _functional_ deep learning library for Python.
 
-The main focus of Positron is to implement functions that are common (or rare) in Linear Algebra, but are not in Numpy by default.
+The main focuses of Positron are
+* Speed
+* Functions
+* Useability
+* Understandability
 
 _There is a [Medium Article](https://martinkondor.medium.com/positron-linear-algebra-library-for-python-8a3c5c3e1c00) written about this library, make sure to check it out!_
 
