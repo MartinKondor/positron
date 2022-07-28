@@ -13,22 +13,93 @@ def seed(n: int):
 :weight_sizes: size of the weights in order
 :output_size: the number of outputs
 """
-def init_network(input_shape: tuple or list, weight_sizes: list, output_size: int, verbose=False):
+def init_network(input_shape: tuple or list, weight_sizes: list, verbose=False):
     ws, bs = [], []
 
-    # Create weights
-    prev_s = input_shape[-1]
+    w_row_number = input_shape[1]
+    for s in weight_sizes:
+        w = np.random.random((w_row_number, s,))
+        b = np.random.random((1, s,))
+        w_row_number = s
+        ws.append(w)
+        bs.append(b)
 
-    for s in weight_sizes + [output_size]:
-        ws.append(np.random.random((prev_s, s,)))
-        bs.append(np.random.random((1, s,)))
-        
         if verbose:
-            print("Created layer with shape:", ws[-1].shape, bs[-1].shape)
-        
-        prev_s = ws[-1].shape[1]
-
+            print("Weights created in shape:", w.shape)
+            print("Biases created in shape:", b.shape)
+            print()
+    
     return ws, bs
+
+
+"""
+:a: input matrix
+:ws: weights (list of np.ndarray)
+:bs: biases (list of np.ndarray)
+:actifs: list of activation functions
+:return: the output of the network
+"""
+def feedforward(a: np.ndarray, ws: np.ndarray, bs: np.ndarray, actifs: list) -> np.ndarray:
+    for w, b, actif in zip(ws, bs, actifs):
+        a = actif(np.dot(a, w) + b)
+    return a
+
+
+"""
+Inputs from update_batch function.
+:rerurns: (nabla_ws, nabla_bs,)
+"""
+def backprop(x, y, ws, bs, activfs, dactivfs, cost, dcost, eta):
+    nabla_ws = [np.zeros(w.shape) for w in ws]
+    nabla_bs = [np.zeros(b.shape) for b in bs]
+    layers = []
+    a = x
+    activated_layers = [x]
+
+    # For each layer: (prev_activated_layer or X).w + b
+    for w, b, activf in zip(ws, bs, activfs):
+        z = np.dot(a, w) + b
+        a = activf(z)
+
+        layers.append(z)
+        activated_layers.append(a)
+
+    # For the first layer: dC/da * dA/dz
+    delta_layer = dcost(a, y) * dactivfs[-1](layers[-1])
+    nabla_bs[-1] = delta_layer
+    nabla_ws[-1] = np.dot(activated_layers[-2].T, delta_layer)
+    
+    # Then for other layers: (last_delta).w^(l-1).T * dA/dz^l
+    for l in range(2, len(ws)):
+        delta_layer = np.dot(delta_layer, ws[-l+1].T) * dactivfs[-l](layers[-l])
+        nabla_bs[-l] = delta_layer
+        nabla_ws[-l] = np.dot(activated_layers[-l-1].T, delta_layer)
+
+    return nabla_ws, nabla_bs, np.sum(cost(activated_layers[-1], y))
+
+
+"""
+Update the weights on one mini_batch of data
+Inputs from SGD function.
+
+:x, y: [[...]_0 ... [...]_mini_batch_size]
+:returns: loss (calculated cost)
+"""
+def update_batch(x, y, ws, bs, activfs, dactivfs, cost, dcost, eta):
+    nabla_ws = [np.zeros(w.shape) for w in ws]
+    nabla_bs = [np.zeros(b.shape) for b in bs]
+    
+    # Backprop
+    delta_nabla_ws, delta_nabla_bs, loss = backprop(x, y, ws, bs, activfs, dactivfs, cost, dcost, eta)
+    
+    # Update nabla weights/biases
+    nabla_ws = [nw+dnw for nw, dnw in zip(nabla_ws, delta_nabla_ws)]
+    nabla_bs = [nb+dnb for nb, dnb in zip(nabla_bs, delta_nabla_bs)]
+
+    # Update weights
+    ws = [w - (eta/len(x) * nw) for w, nw in zip(ws, nabla_ws)]
+    bs = [b - (eta/len(x) * nb) for b, nb in zip(bs, nabla_bs)]
+    return ws, bs, loss
 
 
 """
@@ -45,118 +116,25 @@ Stochastic Gradient Descent.
 :epoch: number of training sessions
 :eta: learning rate
 """
-def SGD(X, y, ws, bs, activf, dactivf, cost, dcost, epoch, eta, verbose=False):
+def SGD(X, y, ws, bs, activfs, dactivfs, cost, dcost, epochs, eta, mini_batch_size=1, verbose=False):
     cost_history = []
+    _batch_range = range(len(X) // mini_batch_size)
 
-    for ep in range(epoch):
-        a = np.copy(X)
-        Z = []
-        A = []
+    # Run for each epoch
+    for epoch in range(epochs):
 
-        # Feedforward
-        for w, b, actf in zip(ws, bs, activf):
-            z = np.dot(a, w) + b
-            a = actf(z)
-            Z.append(z)
-            A.append(a)
+        # Choose baches
+        mini_batches_x = [X[k:k+mini_batch_size] for k in _batch_range]
+        mini_batches_y = [y[k:k+mini_batch_size] for k in _batch_range]
+        
+        for mini_batch_x, mini_batch_y in zip(mini_batches_x, mini_batches_y):
+            ws, bs, c = update_batch(mini_batch_x, mini_batch_y, ws, bs, activfs, dactivfs, cost, dcost, eta)
+            cost_history.append(c)
 
-        # Calculate cost
-        c = cost(A[-1], y)
-        cost_history.append(c)
         if verbose:
-            print("Ep =", epoch, ", Cost =", c)
-
-        # Calculate errors
-        delta = dcost(A[-1], y) * dactivf[-1](Z[-1])
-        nablas_w = [delta]
-        nablas_b = [delta]
-
-        for i, (z, w,) in enumerate(zip(Z[::-1][1:], ws[1:][::-1])):
-            delta = np.dot(delta, w.T) * dactivf[-1](z)
-            nablas_w.append(np.dot(delta.T, A[::-1][i]))
-            nablas_b.append(delta)
-
-        # Backprop
-        # nabla[0] = nabla for last layer
-        for w, b, nabla_w, nabla_b in zip(ws, bs, nablas_w[::-1], nablas_w[::-1]):
-            print("ws,bs:", w.shape, b.shape, "nablas:", nabla_w.shape, nabla_b.shape)
+            print(f"[Ep.{epoch+1}] cost={c}")
 
     return ws, bs, cost_history
-
-
-"""
-:X: input matrix
-:y: the desired outputs
-:ws: weights
-:bs: biases
-:activf: activation functions
-:dactifs: derivate of activation functions
-:cost: cost function
-:dcost: derivate of the cost function
-:epoch: number of training sessions
-:eta: learning rate
-"""
-def _SGD(X, y, ws, bs, activf, dactivf, cost, dcost, epoch, eta, verbose=False):
-    cost_history = []
-
-    for ep in range(epoch):
-        a = np.copy(X)
-        input_weights = []
-        activated_weights = []
-
-        # Feedforward
-        for i, (w, b,) in enumerate(zip(ws, bs)):
-            z = np.dot(a, w) + b
-            a = activf[i](z)
-            input_weights.append(z)
-            activated_weights.append(a)
-
-        # Calculate and save cost
-        C = cost(a, y)
-        cost_history.append(C)
-        if verbose:
-            print(f"epoch={ep}, C={C}")
-
-        # First layer
-        z = input_weights[-1]
-        a = activated_weights[-1]
-        delta_w = dcost(a, y) * dactivf[-1](a)
-        deltas = [delta_w]
-
-        # Skip the last layer from the loop
-        # i = 0, 1, 2 ... len(activated_weights) - 2
-        for i, a in enumerate(activated_weights[:-1]):
-            delta_w = np.dot(delta_w, ws[-i-1].T) * dactivf[-i-1](a)
-            deltas.append(delta_w)
-
-
-        # Update the weights
-        i = len(ws) - 1
-        acs = [X, *activated_weights]
-        for w in ws:
-
-            # The first layer is updated with the input
-            if i == 0:
-                ws[0] += eta*np.dot(X.T, deltas[0])
-                continue
-            
-            ws[-i] += eta*np.dot(activated_weights[i-1].T, deltas[i-1])
-            i -= 1
-
-    return ws, bs, cost_history
-
-
-"""
-:a: input matrix
-:ws: weights (list of np.ndarray)
-:bs: biases (list of np.ndarray)
-:actifs: list of activation functions
-:return: the output of the network
-"""
-def feedforward(a: np.ndarray, ws: list, bs: list, actifs: list):
-    for i, (w, b) in enumerate(zip(ws, bs)):
-        a = actifs[i](np.dot(a, w) + b)
-    return a
 
 
 if __name__ == "__main__":

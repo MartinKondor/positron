@@ -1,9 +1,11 @@
 import numpy as np
 
 
+"""
+Sigmoid function
+"""
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
-
 
 def dsigmoid(z):
     return sigmoid(z) * (1 - sigmoid(z))
