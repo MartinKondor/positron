@@ -62,6 +62,7 @@ This project is open for any kind of contribution from anyone.
 3. Clone it
 4. Make your changes
 5. Upload them
+
 (5+1). Make a pull request here
 
 ## Authors
