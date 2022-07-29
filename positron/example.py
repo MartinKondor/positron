@@ -38,7 +38,7 @@ def run():
     ws, bs = d.init_network(input_shape=X.shape, weight_sizes=layer_sizes, verbose=False)
     
     # Hyperparameters 
-    epochs = 40_000
+    epochs = 59_999
     cost = score.mse
 
     start_time = time.time()

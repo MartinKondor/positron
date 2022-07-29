@@ -1,5 +1,6 @@
 import time
 import datetime
+import math
 
 import pandas as pd
 import numpy as np
@@ -14,6 +15,10 @@ def dates_to_stamps(dates, format="%d-%m-%Y"):
     for date in dates:
         X.append(time.mktime(datetime.datetime.strptime(date, format).timetuple()))
     return np.array(X)
+
+
+def normalize(x):
+    return x / np.max(x)
 
 
 """
@@ -33,12 +38,25 @@ Split data to train and test set according to the given test ratio
 :test_ratio: float type containing the precentage, like: 0.2 for 20%
 :returns: train data, test data
 """
-def split_train_test(data: pd.DataFrame, test_ratio=0.2):
+def _split_train_test(data: pd.DataFrame, test_ratio):
     shuffled_indices = np.random.permutation(len(data))
     test_set_size = int(len(data) * test_ratio)
     test_indices = shuffled_indices[:test_set_size]
     train_indices = shuffled_indices[test_set_size:]
     return data.iloc[train_indices], data.iloc[test_indices]
+
+
+"""
+In case of calling the function with np.ndarrays
+:X: np.ndarray
+:y: np.ndarray
+:test_ratio: float between 0 and 1
+:returns: X_train, X_test, y_train, y_test
+"""
+def split_train_test(X, y, test_ratio=0.1):
+    trainsize = int(math.floor(X.shape[0]*(1 - test_ratio)))
+    testsize = int(math.ceil(X.shape[0]*test_ratio))
+    return X[:trainsize], X[trainsize:], y[:trainsize], y[trainsize:]
 
 
 """

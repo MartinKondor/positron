@@ -1,4 +1,5 @@
 import numpy as np
+from sympy import evaluate
 from tqdm import tqdm
 
 
@@ -124,13 +125,13 @@ def SGD(X, y, ws, bs, activfs, dactivfs, cost, dcost, epochs, eta, mini_batch_si
     # Run for each epoch
     _ep_range = range(epochs)
     if verbose:
-        _ep_range = tqdm(_ep_range, desc=f"Epoch[{0}]", unit=" ep")
+        _ep_range = tqdm(_ep_range, desc=f"Training", unit=" ep")
 
     for epoch in _ep_range:
 
         # Choose baches
-        mini_batches_x = [X[k:k+mini_batch_size] for k in _batch_range]
-        mini_batches_y = [y[k:k+mini_batch_size] for k in _batch_range]
+        mini_batches_x = X if mini_batch_size == len(X) else [X[k:k+mini_batch_size] for k in _batch_range]
+        mini_batches_y = y if mini_batch_size == len(y) else [y[k:k+mini_batch_size] for k in _batch_range]
         
         for mini_batch_x, mini_batch_y in zip(mini_batches_x, mini_batches_y):
             ws, bs = update_batch(mini_batch_x, mini_batch_y, ws, bs, activfs, dactivfs, cost, dcost, eta)
@@ -140,6 +141,10 @@ def SGD(X, y, ws, bs, activfs, dactivfs, cost, dcost, epochs, eta, mini_batch_si
             cost_history.append(cost(a, y).sum())
 
     return ws, bs, cost_history
+
+
+# Define an alias
+evaluate = feedforward
 
 
 if __name__ == "__main__":
