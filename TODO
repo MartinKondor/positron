@@ -1,1 +1,4 @@
 [] Tests
+[x] Add more activation functions
+[] Make the library more understandable with lesser parameters
+[] Make it as fast as possible currently

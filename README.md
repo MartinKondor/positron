@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="docs/activfs.png" width="500px">
+</p>
+
 # ⚡ Positron
 
 [![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg)](https://github.com/MartinKondor/positron/)
