@@ -34,6 +34,16 @@ def dmse(y_hat, y):
     return y_hat - y
 
 
+"""
+Cross entropy
+"""
+def cross_entropy(a, y):
+    return  -(y * np.log(a) + (1 - y) * np.log(1 - a)) / len(y)
+
+def dcross_entropy(a, y):
+    return -y / a + (1 - y) / (1 - a)
+
+
 if __name__ == "__main__":
     y_hat1 = np.array([0, 1, 2, 3, 4, 5, 6, 7])
     y_hat2 = np.array([0, 2, 4, 7, 15, 32, 59, 128])

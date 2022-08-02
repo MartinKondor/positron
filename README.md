@@ -29,7 +29,7 @@ _There is a [Medium Article](https://martinkondor.medium.com/positron-linear-alg
 | **activ.py**      | Common Deep Learning **Activation Functions**.       |
 | **maths.py**      | **Matrix operations**: inverse, determinant, adjungate etc.       |
 | **prep.py**      | **Data Preprocessing Functions**: time stamp to date, date to time stamp etc.        |
-| **score.py**     | **Scoring/loss/cost Functions** and their derivatives: residual sum of squares, mean absolute error etc.        |
+| **loss.py**     | **Loss/cost Functions** and their derivatives: residual sum of squares, mean absolute error etc.        |
 
 ## Getting Started
 

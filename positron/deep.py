@@ -1,7 +1,7 @@
 import numpy as np
 
 import activ
-import score
+import loss
 
 
 """
@@ -47,9 +47,9 @@ def get_activactions_from_strings(activfs_strings, return_derivate=True):
 :returns: (cost, dcost) if return_derivate else (cost)
 """
 def get_cost_from_string(cost_string, return_derivate=True):
-    cost = getattr(score, cost_string)
+    cost = getattr(loss, cost_string)
     if return_derivate:
-        dcost = getattr(score, "d" + cost_string)
+        dcost = getattr(loss, "d" + cost_string)
         return cost, dcost
     return cost
 
@@ -235,5 +235,4 @@ evaluate = feedforward
 
 
 if __name__ == "__main__":
-    import example
-    example.run()
+    pass

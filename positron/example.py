@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 import activ
 import deep
-import score
+import loss
 
 
 def get_data():
@@ -27,10 +27,10 @@ def run():
     weights, biases = deep.init_network(n_features=X.shape[1], weight_sizes=layer_sizes)
     
     # Hyperparameters 
-    epochs = 10_000
-    cost = "mse"
+    epochs = 4_500
+    cost = "cross_entropy"
 
-    # Time of training: 1.2309s for 4 rows and 10000 epochs
+    # (v1.1) Time of training: 1.2309s for 4 rows and 10000 epochs
 
     start_time = time.time()
     weights, biases, cost_history = deep.SGD(
@@ -39,7 +39,7 @@ def run():
         activations=actifs,
         costf=cost,
         epochs=epochs,
-        eta=0.999,
+        eta=0.9,
         mini_batch_size=1,
         verbose=True,
         cost_history_needed=False)
