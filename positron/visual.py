@@ -9,27 +9,33 @@ def _vis_basic(y, lowerx=-10, upperx=10, figsize=(7, 7,), title="Plot"):
     return X, fig
 
 
-def plot(y, lowerx=-10, upperx=10, figsize=(7, 7,), title="Plot", c="b"):
+def plot(y, lowerx=-10, upperx=10, figsize=(7, 7,), title="Plot", grid=True, **kwargs):
     X, fig = _vis_basic(y, lowerx, upperx, figsize, title)
-    plt.plot(X, y, c=c, linewidth=2)
+    if grid:
+        plt.grid()
+    plt.plot(X, y, **kwargs, linewidth=2)
     return X, fig
 
 
-def show_plot(y, lowerx=-10, upperx=10, figsize=(7, 7,), title="Plot", c="b"):
-    X, fig = plot(y, lowerx, upperx, figsize, title, c)
+def show_plot(y, lowerx=-10, upperx=10, figsize=(7, 7,), title="Plot", grid=True, **kwargs):
+    X, fig = plot(y, lowerx, upperx, figsize, title, grid, **kwargs)
     plt.show()
 
 
-def scatter(y, lowerx=-10, upperx=10, figsize=(7, 7,), title="Plot", c="b", marker="o"):
+def scatter(y, lowerx=-10, upperx=10, figsize=(7, 7,), title="Plot", grid=True, **kwargs):
     X, fig = _vis_basic(y, lowerx, upperx, figsize, title)
-    plt.plot(X, y, c=c, marker=marker, linewidth=2)
+    if grid:
+        plt.grid()
+    plt.scatter(X, y, **kwargs, linewidth=2)
     return X, fig
 
 
-def show_scatter(y, lowerx=-10, upperx=10, figsize=(7, 7,), title="Plot", c="b", marker="o"):
-    X, fig = scatter(y, lowerx, upperx, figsize, title, c, marker)
+def show_scatter(y, lowerx=-10, upperx=10, figsize=(7, 7,), title="Plot", grid=True, **kwargs):
+    X, fig = scatter(y, lowerx, upperx, figsize, title, grid, **kwargs)
     plt.show()
 
 
 if __name__ == "__main__":
-    show_plot(np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))
+    import activ
+    x = np.arange(-10, 10, 0.1)
+    show_plot(activ.softplus(x), grid=True)

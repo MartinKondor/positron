@@ -13,52 +13,40 @@ import score
 
 def run():
 
-    # Get some data
+    # Get training data
     d.seed(12)
-    s = 1
-    X = np.array([
-        *[[0, 0] for _ in range(s)],
-        *[[0, 1] for _ in range(s)],
-        *[[1, 0] for _ in range(s)],
-        *[[1, 1] for _ in range(s)],
-    ])
-    y = np.array([
-        *[[0] for _ in range(s)],
-        *[[1] for _ in range(s)],
-        *[[1] for _ in range(s)],
-        *[[0] for _ in range(s)],
-    ])
+    X = np.array([[0, 0],[0, 1],[1, 0],[1, 1]])
+    y = np.array([[0],[1],[1],[0]])
 
-    # Activation functions & their derivatives
+    # Activation functions
     layer_sizes = [4, 4, 1]
-    actifs = [activ.sigmoid for _ in range(len(layer_sizes)+1)]
-    dactifs = [activ.dsigmoid for _ in range(len(layer_sizes)+1)]
+    actifs = ["sigmoid", "sigmoid", "sigmoid"]
 
     # Generate a basic network
     ws, bs = d.init_network(input_shape=X.shape, weight_sizes=layer_sizes, verbose=False)
     
     # Hyperparameters 
-    epochs = 59_999
-    cost = score.mse
+    epochs = 10_000
+    cost = "mse"
 
     start_time = time.time()
     ws, bs, cost_history = d.SGD(
         X, y, ws, bs,
-        actifs, dactifs,
-        cost=cost,
-        dcost=score.dmse,
+        activations=actifs,
+        costf="mse",
         epochs=epochs,
-        eta=0.1,
+        eta=0.999,
         mini_batch_size=1,
         verbose=True,
         cost_history_needed=False)
     end_time = time.time()
 
     o = d.feedforward(X, ws, bs, actifs)
+    costf = d.get_cost_from_string(cost, return_derivate=False)
     print("Time of training:", str(round(end_time - start_time, 4)) + "s", "for", len(X), "rows and", epochs, "epochs")
 
     # Plot cost history
-    if len(cost_history) > 0:
+    if False and len(cost_history) > 0:
         if len(cost_history) > 100:
             cost_history = cost_history[:100]
 
@@ -72,7 +60,7 @@ def run():
         plt.plot(range(len(cost_history)), cost_history, c="g", alpha=0.9)
         plt.show()
     else:
-        print("Cost =", round(cost(o, y).sum(), 4))
+        print("Cost =", round(costf(o, y).sum(), 4))
 
     print()
     print("Example input/output:")

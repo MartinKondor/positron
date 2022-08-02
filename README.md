@@ -5,7 +5,7 @@
 # ⚡ Positron
 
 [![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg)](https://github.com/MartinKondor/positron/)
-[![version](https://img.shields.io/badge/version-v1.0-brightgreen.svg)](https://github.com/MartinKondor/positron)
+[![version](https://img.shields.io/badge/version-v1.1-brightgreen.svg)](https://github.com/MartinKondor/positron)
 [![GitHub Issues](https://img.shields.io/github/issues/MartinKondor/positron.svg)](https://github.com/MartinKondor/positron/issues)
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 [![License](https://img.shields.io/badge/license-BSD-brightgreen.svg)](https://opensource.org/licenses/BSD)

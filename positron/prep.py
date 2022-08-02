@@ -17,6 +17,12 @@ def dates_to_stamps(dates, format="%d-%m-%Y"):
     return np.array(X)
 
 
+"""
+Normalize values to be betwwen [0;1]
+
+:x: np.ndarray
+:returns: np.ndarray
+"""
 def normalize(x):
     return x / np.max(x)
 

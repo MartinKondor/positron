@@ -12,6 +12,19 @@ def drss(y_hat, y):
 
 
 """
+Mean Absolute Error
+"""
+def mae(y_hat, y):
+    return  1/len(y) * np.abs(y - y_hat)
+
+def dmae(y_hat, y):
+    r = np.zeros(y_hat.shape)
+    r[y_hat > y] = 1
+    r[y_hat <= y] = -1
+    return r
+
+
+"""
 Mean Square Error
 """
 def mse(y_hat, y):
