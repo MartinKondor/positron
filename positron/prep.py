@@ -18,6 +18,21 @@ def dates_to_stamps(dates, format="%d-%m-%Y"):
 
 
 """
+Usage:
+:y: np.array([[ targets ]]).T
+:returns: one-hot encoded y
+"""
+def one_hot_encode(y):
+    classes = list(np.unique(y))
+    yn = np.zeros((y.shape[0], len(classes)))
+
+    for i, yrow in enumerate(y):
+        yn[i][classes.index(yrow[0])] = 1
+
+    return yn
+
+
+"""
 Normalize values to be betwwen [0;1]
 
 :x: np.ndarray
@@ -59,7 +74,11 @@ In case of calling the function with np.ndarrays
 :test_ratio: float between 0 and 1
 :returns: X_train, X_test, y_train, y_test
 """
-def split_train_test(X, y, test_ratio=0.1):
+def split_train_test(X, y, test_ratio=0.1, shuffle=True):
+    if shuffle:
+        from sklearn.utils import shuffle
+        X, y = shuffle(X, y)
+
     trainsize = int(math.floor(X.shape[0]*(1 - test_ratio)))
     testsize = int(math.ceil(X.shape[0]*test_ratio))
     return X[:trainsize], X[trainsize:], y[:trainsize], y[trainsize:]
@@ -80,7 +99,7 @@ if __name__ == "__main__":
     df = pd.DataFrame()
     df["X"] = X
     df["y"] = y
-    trainset, testset = split_train_test(df, test_ratio=0.4)
+    trainset, testset = _split_train_test(df, test_ratio=0.4)
 
     print("X =", X, "( len =", len(y), ")")
     print("y =", y, "( len =", len(y), ")")
@@ -95,3 +114,10 @@ if __name__ == "__main__":
     print("Example date:", *date)
     print("Date as stamp:", *dates_to_stamps(date))
     print("Stamp as date:", *stamps_to_dates(dates_to_stamps(date)))
+
+    y = np.array([[0, 1, 0, 2]]).T
+    y_encoded = one_hot_encode(y)
+    print()
+    print("One hot encoding:")
+    print("y =", *y)
+    print("y_encoded =", *y_encoded)

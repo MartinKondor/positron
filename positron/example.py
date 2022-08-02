@@ -1,39 +1,43 @@
 # Learning the XOR gate with a neural network
 import time
-import math
-
-import matplotlib.pyplot as plt
 
 import numpy as np
-from regex import P
+import matplotlib.pyplot as plt
+
 import activ
-import deep as d
+import deep
 import score
+
+
+def get_data():
+    return np.array([[0, 0],[0, 1],[1, 0],[1, 1]]), np.array([[0],[1],[1],[0]])
 
 
 def run():
 
-    # Get training data
-    d.seed(12)
-    X = np.array([[0, 0],[0, 1],[1, 0],[1, 1]])
-    y = np.array([[0],[1],[1],[0]])
+    # Training data
+    deep.seed(12)
+    X, y = get_data()
 
     # Activation functions
     layer_sizes = [4, 4, 1]
     actifs = ["sigmoid", "sigmoid", "sigmoid"]
 
     # Generate a basic network
-    ws, bs = d.init_network(input_shape=X.shape, weight_sizes=layer_sizes, verbose=False)
+    weights, biases = deep.init_network(n_features=X.shape[1], weight_sizes=layer_sizes)
     
     # Hyperparameters 
     epochs = 10_000
     cost = "mse"
 
+    # Time of training: 1.2309s for 4 rows and 10000 epochs
+
     start_time = time.time()
-    ws, bs, cost_history = d.SGD(
-        X, y, ws, bs,
+    weights, biases, cost_history = deep.SGD(
+        X, y,
+        weights, biases,
         activations=actifs,
-        costf="mse",
+        costf=cost,
         epochs=epochs,
         eta=0.999,
         mini_batch_size=1,
@@ -41,12 +45,12 @@ def run():
         cost_history_needed=False)
     end_time = time.time()
 
-    o = d.feedforward(X, ws, bs, actifs)
-    costf = d.get_cost_from_string(cost, return_derivate=False)
+    o = deep.feedforward(X, weights, biases, actifs)
+    costf = deep.get_cost_from_string(cost, return_derivate=False)
     print("Time of training:", str(round(end_time - start_time, 4)) + "s", "for", len(X), "rows and", epochs, "epochs")
 
     # Plot cost history
-    if False and len(cost_history) > 0:
+    if len(cost_history) > 0:
         if len(cost_history) > 100:
             cost_history = cost_history[:100]
 
@@ -66,12 +70,11 @@ def run():
     print("Example input/output:")
     X = np.array([[0, 0],[0, 1],[1, 0],[1, 1]])
     y = np.array([[0, 1, 1, 0]]).T
-    print("\t", "Inputs:\t\t", *X)
-    o = d.feedforward(X, ws, bs, actifs)
-    print("\t", "Outputs:\t", [int(_[0]) for _ in np.round(o)])
-    print("\t", "Desired outputs:", [int(_[0]) for _ in y])
-    print("\t", "Neural Network outputs:")
-    print("\t", *o)
+    print("\tX:\t", *X)
+    o = deep.feedforward(X, weights, biases, actifs)
+    print("\ty_hat:\t", [int(_[0]) for _ in np.round(o)])
+    print("\ty:\t", [int(_[0]) for _ in y])
+    print("\tNeural Network outputs:\n\t", *o)
 
 
 if __name__ == "__main__":

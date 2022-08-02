@@ -1,5 +1,4 @@
 import numpy as np
-from tqdm import tqdm
 
 import activ
 import score
@@ -8,7 +7,7 @@ import score
 """
 Settings the random seeds to the given value
 """
-def seed(n: int):
+def seed(n):
     np.random.seed(n)
 
 
@@ -56,24 +55,23 @@ def get_cost_from_string(cost_string, return_derivate=True):
 
 
 """
-:input_shape:
-:weight_sizes: size of the weights in order
-:output_size: the number of outputs
+:n_features: int, number of features
+:weight_sizes: list with the size of the weights in order
+:verbose: bool
+:returns: (weights, biases) or ws, bs
 """
-def init_network(input_shape: tuple or list, weight_sizes: list, verbose=False):
+def init_network(n_features, weight_sizes, verbose=False):
     ws, bs = [], []
+    w_row_number = n_features
 
-    w_row_number = input_shape[1]
     for s in weight_sizes:
-        w = np.random.random((w_row_number, s,))
-        b = np.random.random((1, s,))
+        ws.append(np.random.random((w_row_number, s,)))
+        bs.append(np.random.random((1, s,)))
         w_row_number = s
-        ws.append(w)
-        bs.append(b)
 
         if verbose:
-            print("Weights created in shape:", w.shape)
-            print("Biases created in shape:", b.shape)
+            print("Weights created in shape:", ws[-1].shape)
+            print("Biases created in shape:", bs[-1].shape)
             print()
     
     return ws, bs
@@ -97,7 +95,7 @@ def feedforward(a, ws, bs, actifs_) -> np.ndarray:
 Inputs from update_batch function.
 :rerurns: (nabla_ws, nabla_bs,)
 """
-def backprop(x, y, ws, bs, activfs, dactivfs, cost, dcost, eta):
+def backprop(x, y, ws, bs, activfs, dactivfs, dcost):
     nabla_ws = [np.zeros(w.shape) for w in ws]
     nabla_bs = [np.zeros(b.shape) for b in bs]
     layers = []
@@ -142,12 +140,12 @@ Inputs from SGD function.
 :x, y: [[...]_0 ... [...]_mini_batch_size]
 :returns: ws, bs
 """
-def update_batch(x, y, ws, bs, activfs, dactivfs, cost, dcost, eta):
+def update_batch(x, y, ws, bs, activfs, dactivfs, dcost, eta):
     nabla_ws = [np.zeros(w.shape) for w in ws]
     nabla_bs = [np.zeros(b.shape) for b in bs]
     
     # Backprop
-    delta_nabla_ws, delta_nabla_bs = backprop(x, y, ws, bs, activfs, dactivfs, cost, dcost, eta)
+    delta_nabla_ws, delta_nabla_bs = backprop(x, y, ws, bs, activfs, dactivfs, dcost)
     
     # Update nabla weights/biases
     nabla_ws = [nw+dnw for nw, dnw in zip(nabla_ws, delta_nabla_ws)]
@@ -211,6 +209,7 @@ def SGD(X, y, ws, bs, activations, costf, epochs, eta, mini_batch_size=1, verbos
     # Run for each epoch
     _ep_range = range(epochs)
     if verbose:
+        from tqdm import tqdm
         _ep_range = tqdm(_ep_range, desc=f"Training", unit=" ep")
 
     for epoch in _ep_range:
@@ -221,7 +220,7 @@ def SGD(X, y, ws, bs, activations, costf, epochs, eta, mini_batch_size=1, verbos
         
         # Train on batches 
         for mini_batch_x, mini_batch_y in zip(mini_batches_x, mini_batches_y):
-            ws, bs = update_batch(mini_batch_x, mini_batch_y, ws, bs, activfs, dactivfs, cost, dcost, eta)
+            ws, bs = update_batch(mini_batch_x, mini_batch_y, ws, bs, activfs, dactivfs, dcost, eta)
         
         # Save cost history if needed
         if cost_history_needed:
