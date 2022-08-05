@@ -1,7 +1,7 @@
 import numpy as np
 
-import activ
-import loss
+import positron.activ as activ
+import positron.loss as loss
 
 
 """
@@ -23,18 +23,21 @@ def get_activactions_from_strings(activfs_strings, return_derivate=True):
     activfs = []
     dactivfs = []
     
-    if isinstance(activfs_strings[0], str):
-        for activfs_string in activfs_strings:
+    for activfs_string in activfs_strings:
+        try:
             try:
                 activfs.append(getattr(activ, activfs_string))
-                
-                if return_derivate:
-                    dactivfs.append(getattr(activ, "d" + activfs_string))
-            
-            except:
-                raise Exception("Unknown activation function(s)")
-    else:
-        raise Exception("Unknown activation function(s)")
+            except TypeError as e:
+                if hasattr(activfs_string, "__call__"):
+                    activfs.append(activfs_string)
+                else:
+                    raise e
+
+            if return_derivate:
+                dactivfs.append(getattr(activ, "d" + activfs_string))
+        
+        except:
+            raise Exception("Unknown activation function(s)")
 
     if return_derivate:
         return activfs, dactivfs
@@ -171,8 +174,8 @@ Stochastic Gradient Descent.
 :eta: learning rate
 :returns: ws, bs, cost_history
 """
-def SGD(X, y, ws, bs, activations, costf, epochs, eta, mini_batch_size=1, verbose=False, cost_history_needed=True):
-    
+def SGD(X, y, ws, bs, activations, costf, epochs, eta, mini_batch_size=1, verbose=False, little_verbose=False, cost_history_needed=True):
+
     # First check the inputs
     if not isinstance(X, np.ndarray):
         X = np.array(X)
@@ -208,9 +211,8 @@ def SGD(X, y, ws, bs, activations, costf, epochs, eta, mini_batch_size=1, verbos
 
     # Run for each epoch
     _ep_range = range(epochs)
-    if verbose:
-        from tqdm import tqdm
-        _ep_range = tqdm(_ep_range, desc=f"Training", unit=" ep")
+    epochs_10_percent = int(epochs*0.1)
+
 
     for epoch in _ep_range:
 
@@ -223,9 +225,22 @@ def SGD(X, y, ws, bs, activations, costf, epochs, eta, mini_batch_size=1, verbos
             ws, bs = update_batch(mini_batch_x, mini_batch_y, ws, bs, activfs, dactivfs, dcost, eta)
         
         # Save cost history if needed
-        if cost_history_needed:
+        if cost_history_needed or verbose:
             a = feedforward(X, ws, bs, activfs)
-            cost_history.append(cost(a, y).sum())
+            _acc = round(np.sum(a==y)/len(y), 4)
+            _loss = np.sum(cost(a, y))
+            
+            if verbose:
+                print(f"[{epoch}. epoch] acc={_acc} loss={_loss}")
+
+            if cost_history_needed:
+                cost_history.append(cost(a, y).sum())
+        
+        if little_verbose and not verbose and epoch%epochs_10_percent==0:
+            print(f"Progressing at the {epoch}. epoch.")
+
+        
+
 
     return ws, bs, cost_history
 

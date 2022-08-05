@@ -38,10 +38,18 @@ def dmse(y_hat, y):
 Cross entropy
 """
 def cross_entropy(a, y):
-    return  -(y * np.log(a) + (1 - y) * np.log(1 - a)) / len(y)
+    r = -(y * np.log(a) + (1 - y) * np.log(1 - a)) / len(y)
+    r = np.nan_to_num(r, nan=0, posinf=0, neginf=0)
+    return r
 
 def dcross_entropy(a, y):
-    return -y / a + (1 - y) / (1 - a)
+    ar = np.copy(a)
+    yr = np.copy(y)
+    r = np.zeros(a.shape)
+    func = lambda y, a: y / a - (1 - y) / (1 - a)
+    r[ar != 0] = func(ar[ar != 0], yr[ar != 0])
+    r = np.nan_to_num(r, nan=0, posinf=0, neginf=0)
+    return r
 
 
 if __name__ == "__main__":

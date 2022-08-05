@@ -47,9 +47,17 @@ For the dependencies, see the contents of the [requirements.txt](./requirements.
 
 ## Tests
 
-To run tests on a file, run the file directly, for example:
+To run tests on a file, run the test module directly, for example:
 
-```$ python positron/math.py```
+```$ python -m tests.loss```
+
+Will test the ```positron/loss.py``` file.
+
+### Examples
+
+You can try to run an example file to see the library in work:
+
+```$ python -m positron.loss```
 
 ## Contributing
 
